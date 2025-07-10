@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Brain, BarChart3, MessageSquare, Settings, CheckCircle } from "lucide-react"
-import { ComparisonTable } from "@/components/comparison-table"
+import { Brain, BarChart3, MessageSquare, Settings, CheckCircle, Clock, Users, Trophy, Zap, TrendingUp, Shield } from "lucide-react"
 import { FeatureCard } from "@/components/feature-card"
 import { HeroSection } from "@/components/hero-section"
 import { Testimonials } from "@/components/testimonials"
@@ -86,13 +85,99 @@ export default function Home() {
         <section className="bg-muted py-24">
           <div className="container space-y-12">
             <div className="text-center space-y-4">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">How FocusBae Compares</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why Choose FocusBae?</h2>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                See how we stack up against other productivity tools
+                Join thousands of professionals who've transformed their work-life balance with our AI-powered wellness companion
               </p>
             </div>
 
-            <ComparisonTable />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="bg-white p-8 rounded-lg shadow-sm border">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <Clock className="h-8 w-8 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-primary">2.5hrs</h3>
+                    <p className="text-sm text-gray-500">Average daily time saved</p>
+                  </div>
+                </div>
+                <p className="text-gray-600">Users report significant improvement in time management and focus within the first week</p>
+              </div>
+
+              <div className="bg-white p-8 rounded-lg shadow-sm border">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-green-100 rounded-lg">
+                    <TrendingUp className="h-8 w-8 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-green-600">85%</h3>
+                    <p className="text-sm text-gray-500">Productivity increase</p>
+                  </div>
+                </div>
+                <p className="text-gray-600">Boost your productivity with AI-powered insights and personalized wellness reminders</p>
+              </div>
+
+              <div className="bg-white p-8 rounded-lg shadow-sm border">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-blue-100 rounded-lg">
+                    <Users className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-blue-600">10K+</h3>
+                    <p className="text-sm text-gray-500">Happy users</p>
+                  </div>
+                </div>
+                <p className="text-gray-600">Join our growing community of professionals who prioritize their well-being</p>
+              </div>
+
+              <div className="bg-white p-8 rounded-lg shadow-sm border">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-purple-100 rounded-lg">
+                    <Zap className="h-8 w-8 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-purple-600">24/7</h3>
+                    <p className="text-sm text-gray-500">AI Assistant</p>
+                  </div>
+                </div>
+                <p className="text-gray-600">Get instant support and wellness coaching whenever you need it most</p>
+              </div>
+
+              <div className="bg-white p-8 rounded-lg shadow-sm border">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-yellow-100 rounded-lg">
+                    <Trophy className="h-8 w-8 text-yellow-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-yellow-600">4.9/5</h3>
+                    <p className="text-sm text-gray-500">User rating</p>
+                  </div>
+                </div>
+                <p className="text-gray-600">Consistently rated as the best productivity and wellness app by our users</p>
+              </div>
+
+              <div className="bg-white p-8 rounded-lg shadow-sm border">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-red-100 rounded-lg">
+                    <Shield className="h-8 w-8 text-red-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-red-600">100%</h3>
+                    <p className="text-sm text-gray-500">Privacy protected</p>
+                  </div>
+                </div>
+                <p className="text-gray-600">Your data stays secure with end-to-end encryption and privacy-first design</p>
+              </div>
+            </div>
+
+            <div className="text-center pt-8">
+              <Link href="/signup">
+                <Button size="lg" className="bg-primary hover:bg-primary/90">
+                  Start Your Wellness Journey Today
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
 

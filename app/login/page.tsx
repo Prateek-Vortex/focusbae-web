@@ -32,19 +32,26 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       })
 
-      const data = await response.json()
+      let data: { detail?: string; access_token?: string } = {}
+       try {
+         data = await response.json()
+       } catch {
+         throw new Error("Invalid JSON response")
+       }
 
       if (!response.ok) {
-        throw new Error(data.detail || "Login failed")
+        throw new Error(data?.detail || "Login failed")
       }
 
       // Store the token in localStorage
-      localStorage.setItem("focusbae_token", data.access_token)
+      localStorage.setItem("focusbae_token", data?.access_token || "")
 
       toast({
         title: "Login successful",
         description: "Welcome back to FocusBae!",
       })
+
+      console.log("Token set, redirecting to /dashboard")
 
       // Redirect to dashboard
       router.push("/dashboard")

@@ -1,62 +1,75 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/components/ui/use-toast"
-import { Download } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { AppUsageChart } from "@/components/app-usage-chart"
 import { AppUsageStats } from "@/components/app-usage-stats"
+import { useToast } from "@/components/ui/use-toast"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Download } from "lucide-react"
 
 interface AppUsageData {
   [key: string]: number
 }
 
 export default function DashboardPage() {
+  const router = useRouter()
+  const { toast } = useToast()
+
   const [appUsageData, setAppUsageData] = useState<AppUsageData>({})
   const [isLoading, setIsLoading] = useState(true)
   const [timeFilter, setTimeFilter] = useState("today")
-  const { toast } = useToast()
+  const [hydrated, setHydrated] = useState(false)
 
+  // 🔒 Wait for hydration before checking token
   useEffect(() => {
+    setHydrated(true)
+  }, [])
+
+  // 🔐 Redirect if no token
+  useEffect(() => {
+    if (!hydrated) return
+
+    const token = localStorage.getItem("focusbae_token")
+    if (!token) {
+      router.push("/login")
+    }
+  }, [hydrated, router])
+
+  // 📊 Fetch usage stats
+  useEffect(() => {
+    if (!hydrated) return
+
     const fetchAppUsage = async () => {
       setIsLoading(true)
 
       try {
         const token = localStorage.getItem("focusbae_token")
-        if (!token) {
-          throw new Error("No authentication token found")
-        }
+        if (!token) throw new Error("No authentication token found")
 
-        // Calculate minutes based on the selected filter
-        let minutes = 1440 // 24 hours (today)
-        if (timeFilter === "hour") {
-          minutes = 60
-        } else if (timeFilter === "week") {
-          minutes = 10080 // 7 days
-        }
+        let minutes = timeFilter === "hour" ? 60 : timeFilter === "week" ? 10080 : 1440
 
-        const response = await fetch(`https://focusbee-cloud.onrender.com/app-usage?since_minutes=${minutes}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const res = await fetch(
+          `https://focusbee-cloud.onrender.com/app-usage?since_minutes=${minutes}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch app usage data")
-        }
+        if (!res.ok) throw new Error("Failed to fetch usage")
 
-        const data = await response.json()
+        const data = await res.json()
         setAppUsageData(data)
       } catch (error) {
         console.error("Error fetching app usage:", error)
         toast({
           title: "Error",
-          description: "Failed to load app usage data. Please try again.",
+          description: "Failed to load app usage data.",
           variant: "destructive",
         })
-        // Set some sample data for demonstration
+
         setAppUsageData({
           Chrome: 120,
           VSCode: 45,
@@ -70,33 +83,31 @@ export default function DashboardPage() {
     }
 
     fetchAppUsage()
-  }, [timeFilter, toast])
+  }, [hydrated, timeFilter, toast])
 
   const handleExportCSV = () => {
-    // Convert app usage data to CSV
-    const csvContent =
+    const csv =
       "data:text/csv;charset=utf-8," +
       "Application,Minutes\n" +
       Object.entries(appUsageData)
         .map(([app, minutes]) => `${app},${minutes}`)
         .join("\n")
 
-    // Create download link
-    const encodedUri = encodeURI(csvContent)
+    const encodedUri = encodeURI(csv)
     const link = document.createElement("a")
     link.setAttribute("href", encodedUri)
     link.setAttribute("download", `focusbae-app-usage-${timeFilter}.csv`)
     document.body.appendChild(link)
-
-    // Trigger download
     link.click()
     document.body.removeChild(link)
 
     toast({
       title: "CSV Exported",
-      description: "Your app usage data has been exported successfully.",
+      description: "App usage data downloaded.",
     })
   }
+
+  if (!hydrated) return null // ⏳ Don't render until we're ready
 
   return (
     <div className="space-y-6">
@@ -149,7 +160,6 @@ function AppUsageContent({ data, isLoading, timeFilter }: AppUsageContentProps) 
           <AppUsageChart data={data} isLoading={isLoading} />
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Usage Stats</CardTitle>
